@@ -12,10 +12,26 @@
 
 #include "all.h"
 
-int		main(int argc, char **argv)
+void		*ft_mmap(int fd, size_t size)
 {
-	(void)argc;
-	(void)argv;
-	printf("Hello woody_woodpacker !\n");
+	return (mmap(0, size, PROT_READ, MAP_SHARED, fd, 0));
+}
+
+void		print_error(char *error, bool should_exit)
+{
+	printf("Woody Woodpecker is telling you: %s\n", error);
+	if (should_exit)
+		exit(should_exit);
+}
+
+int			main(int argc, char **argv)
+{
+	if (argc == 2)
+	{
+		read_elf("stub");
+		read_elf(argv[1]);
+	}
+	else
+		printf("Woody Woodpecker informs you that you need to give him an executable to encrypt ! \n");
 	return (0);
-}	
+}
