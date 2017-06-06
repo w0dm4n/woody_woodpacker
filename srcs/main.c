@@ -27,9 +27,7 @@ void		print_error(char *error, bool should_exit)
 int			main(int argc, char **argv)
 {
 	if (argc == 2)
-	{
 		read_elf(argv[1]);
-	}
 	else
 		printf("Woody Woodpecker informs you that you need to give him an executable to encrypt ! \n");
 	return (0);

@@ -82,6 +82,7 @@ void		read_elf(char *file_name)
 		if (data->elf->is_64)
 		{
 			copy_elf();
+			update_elf();
 			build();
 		}
 		else

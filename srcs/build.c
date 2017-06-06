@@ -52,14 +52,23 @@ void				set_sections()
 	t_section			*sections		= data->elf->sections;
 	int					i				= 0;
 	void				*base_pointer	= data->new_buffer + data->elf->header->e_shoff;
-		
 	while (sections)
 	{
 		ft_memcpy(base_pointer + ((sizeof(struct elf64_shdr) * i++)), sections->data, sizeof(struct elf64_shdr));
-		if (ft_strcmp(get_section_name(sections->data->sh_name), ".bss"))
-			ft_memcpy(data->new_buffer + sections->data->sh_offset, sections->content, sections->data->sh_size);
+
+		//if (ft_strcmp(get_section_name(sections->data->sh_name), ".bss"))
+		ft_memcpy(data->new_buffer + sections->data->sh_offset, sections->content, sections->data->sh_size);
+		printf("%s\n", get_section_name(sections->data->sh_name));
 		sections = sections->next;
 	}
+}
+
+void					set_strings()
+{
+	t_data				*data = get_data();
+	struct elf64_shdr	*section		= (struct elf64_shdr*) (data->buffer + data->elf->header->e_shoff);
+	struct elf64_shdr	*string_section = &section[data->elf->header->e_shstrndx];
+	ft_memcpy(data->new_buffer + string_section->sh_offset, data->buffer + string_section->sh_offset, string_section->sh_size);
 }
 
 void					build()
@@ -71,5 +80,6 @@ void					build()
 	ft_memcpy(data->new_buffer, data->elf->header, sizeof(struct elf64_hdr));
 	set_segments();
 	set_sections();
+	set_strings();
 	save_file("woody");
 }
