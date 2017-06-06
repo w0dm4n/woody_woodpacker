@@ -28,7 +28,6 @@ int			main(int argc, char **argv)
 {
 	if (argc == 2)
 	{
-		read_elf("stub");
 		read_elf(argv[1]);
 	}
 	else

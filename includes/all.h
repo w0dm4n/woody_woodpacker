@@ -52,20 +52,34 @@ typedef signed long long 			Elf64_Sxword;
 typedef struct			elf64_hdr
 {
 	unsigned char	e_ident[EI_NIDENT];	/* ELF "magic number" */
-	Elf64_Half 		e_type;
-	Elf64_Half 		e_machine;
-	Elf64_Word 		e_version;
+	Elf64_Half 		e_type;				// Type of file (see ET_* below)
+	Elf64_Half 		e_machine;			// Required architecture for this file (see EM_*)
+	Elf64_Word 		e_version;			// Must be equal to 1
 	Elf64_Addr 		e_entry;	     /* Entry point virtual address */
 	Elf64_Off 		e_phoff;	     /* Program header table file offset */
 	Elf64_Off 		e_shoff; 	     /* Section header table file offset */
-	Elf64_Word 		e_flags;
-	Elf64_Half 		e_ehsize;
-	Elf64_Half 		e_phentsize;
-	Elf64_Half 		e_phnum;
-	Elf64_Half 		e_shentsize;
-	Elf64_Half		e_shnum;
-	Elf64_Half		e_shstrndx;
+	Elf64_Word 		e_flags;	 	 // Processor-specific flags
+	Elf64_Half 		e_ehsize;		 // Size of ELF header, in bytes
+	Elf64_Half 		e_phentsize;	 // Size of an entry in the program header table
+	Elf64_Half 		e_phnum;      	/* Length OF Program segment header. */
+	Elf64_Half 		e_shentsize;	// Size of an entry in the section header table
+	Elf64_Half		e_shnum;		// Number of entries in the section header table
+	Elf64_Half		e_shstrndx;		// Sect hdr table index of sect name string table
 }						Elf64_Ehdr;
+
+/* Program segment header.  */
+
+typedef struct		elf64_phdr
+{
+	Elf64_Word		p_type;			// Type of segment
+	Elf64_Word		p_flags;		// Segment flags
+	Elf64_Off		p_offset;		// File offset where segment is located, in bytes
+	Elf64_Addr		p_vaddr;		// Virtual address of beginning of segment
+	Elf64_Addr		p_paddr;		// Physical addr of beginning of segment (OS-specific)
+	Elf64_Xword		p_filesz;		// Num. of bytes in file image of segment (may be zero)
+	Elf64_Xword		p_memsz;		// Num. of bytes in mem image of segment (may be zero)
+	Elf64_Xword		p_align;		// Segment alignment constraint
+}					Elf64_Phdr;
 
 /*
    sh_size       This member holds the section's size in bytes.  Unless the
@@ -112,21 +126,39 @@ typedef struct			elf64_shdr
 	Elf64_Xword		sh_entsize;   /* Entry size if section holds table */
 }						Elf64_Shdr;
 
+
+typedef struct			s_segment
+{
+	struct elf64_phdr*	data;
+	struct s_segment	*prev;
+	struct s_segment	*next;
+}						t_segment;
+
+typedef struct			s_section
+{
+	struct elf64_shdr	*data;
+	void				*content;
+	struct s_section	*prev;
+	struct s_section	*next;
+}						t_section;
+
 typedef struct			s_elf
 {
 	struct elf64_hdr	*header;
+	struct s_segment	*segments;
+	struct s_section	*sections;
 	unsigned char		magic[(MAGIC_LEN * 2) + 1];
 	bool				is_64;
 	bool				big_endian;
 	bool				little_endian;
-}						t_elf;
-
+}
+						t_elf;
 typedef struct	s_data
 {
 	int			fd;
 	off_t		len;
-	void		*file_buffer;
-	void		*encrypted_buffer;
+	void		*buffer;
+	void		*new_buffer;
 	t_elf		*elf;
 }				t_data;
 
@@ -135,16 +167,32 @@ typedef struct	s_data
 */
 void			print_error(char *error, bool should_exit);
 void			*ft_mmap(int fd, size_t size);
+
 /*
 **	DATA
 */
 t_data			*get_data();
+t_section		*get_sections();
+t_segment		*get_segments();
+void			new_segment(struct elf64_phdr	*segment);
+void			new_section(struct elf64_shdr	*section, void *content);
+
 /*
 **	ELF
 */
 void			read_elf(char *file_name);
+void			save_crypted_file(char *file);
 
-char			*g_text;
-char			*g_bss;
+/*
+**	COPY
+*/
+void			copy_elf();
+void			copy_section(void *ptr, int position, int size);
+
+/*
+**	BUILD
+*/
+void			build();
+
 t_data			*g_data;
 #endif
