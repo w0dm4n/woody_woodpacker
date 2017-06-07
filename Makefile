@@ -34,7 +34,8 @@ SRCBASE_WOODY	=	\
 					data.c				\
 					elf.c				\
 					copy.c				\
-					build.c
+					build.c				\
+					update.c
 INCS			=	$(addprefix $(INCDIR), $(INCBASE))
 
 SRCS_WOODY			=	$(addprefix $(SRCDIR_WOODY), $(SRCBASE_WOODY))
