@@ -162,6 +162,12 @@ typedef struct	s_data
 	t_elf		*elf;
 }				t_data;
 
+typedef struct		s_stub
+{
+	void	*text;
+	int		text_len;
+}				t_stub;
+
 /*
 **	MAIN
 */
@@ -193,6 +199,12 @@ void			copy_section(void *ptr, int position, int size);
 **	BUILD
 */
 void			build();
+char			*get_section_name(int offset);
+
+/*
+** UPDATE
+*/
+void			update_elf();
 
 t_data			*g_data;
 #endif
