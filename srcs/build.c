@@ -56,8 +56,9 @@ void				set_sections()
 	{
 		ft_memcpy(base_pointer + ((sizeof(struct elf64_shdr) * i++)), sections->data, sizeof(struct elf64_shdr));
 
-		//if (ft_strcmp(get_section_name(sections->data->sh_name), ".bss"))
-		ft_memcpy(data->new_buffer + sections->data->sh_offset, sections->content, sections->data->sh_size);
+		if (ft_strcmp(get_section_name(sections->data->sh_name), ".bss"))
+			ft_memcpy(data->new_buffer + sections->data->sh_offset, sections->content, sections->data->sh_size);
+
 		printf("%s\n", get_section_name(sections->data->sh_name));
 		sections = sections->next;
 	}
