@@ -6,12 +6,29 @@
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 10:31:31 by jguyet            #+#    #+#             */
-/*   Updated: 2017/06/09 13:29:20 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 14:33:53 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "all.h"
 
+/*
+ * static void     *write_header(void *ptr, t_elf *elf)
+ * ----------------------
+ *
+ * Params :
+ * void *ptr    -> ptr of buffer alloced
+ * t_elf *elf   -> struct t_elf reference
+ *
+ * write header to ptr buffer
+ * change elf->header->e_phnum (NUMBER OF TOTAL SEGMENTS)
+ * change elf->header->e_shnum (NUMBER OF TOTAL SECTIONS)
+ * change elf->header->e_phoff (START POINTER OF SEGMENTS)
+ * change elf->header->e_shoff (START POINTER OF SECTIONS)
+ * change elf->header->e_shstrndx   (INDEX OF STRING TAB)
+ *
+ * Return   void * buffer pointer
+ */
 static void     *write_header(void *ptr, t_elf *elf)
 {
 	//set numbers
@@ -40,6 +57,20 @@ static void     *write_header(void *ptr, t_elf *elf)
 	return (ptr);
 }
 
+/*
+ * static bool	   write_segments(void *ptr, t_elf *elf)
+ * ----------------------
+ *
+ * Params :
+ * void *ptr    -> ptr of start segments zone of buffer alloced
+ * t_elf *elf   -> struct t_elf reference
+ *
+ * write all segments (elf->segments)
+ *
+ * Return   bool
+ *          true    -> success
+ *          false   -> error
+ */
 static bool	   write_segments(void *ptr, t_elf *elf)
 {
 	t_segment	*tmp;
@@ -56,6 +87,20 @@ static bool	   write_segments(void *ptr, t_elf *elf)
 	return (true);
 }
 
+/*
+ * static bool     write_sections(void *ptr, t_elf *elf)
+ * ----------------------
+ *
+ * Params :
+ * void *ptr    -> ptr of start sections zone of buffer alloced
+ * t_elf *elf   -> struct t_elf reference
+ *
+ * write all sections and sections contents (elf->sections) and (elf->sections[?]->content)
+ *
+ * Return   bool
+ *          true    -> success
+ *          false   -> error
+ */
 static bool     write_sections(void *ptr, t_elf *elf)
 {
 	t_section	*tmp;
@@ -73,6 +118,21 @@ static bool     write_sections(void *ptr, t_elf *elf)
 	return (true);
 }
 
+/*
+ * void	       *write_elf(t_elf *elf)
+ * ----------------------
+ *
+ * Params :
+ * t_elf *elf   -> struct t_elf reference
+ *
+ * Alloc a new Pointer by elf->len
+ * write elf->header on top *ptr
+ * write elf->segments after header
+ * write sections_header on footer *ptr and content on center
+ *
+ * Return   void *ptr
+ *          NULL    -> error
+ */
 void	       *write_elf(t_elf *elf)
 {
 	void	*ptr;
