@@ -25,6 +25,7 @@ t_stub			*alloc_stub()
 
 t_stub			*get_stub_data()
 {
+	t_data		*data	= get_data();
 	int			fd		= open("stub", O_RDONLY);
 	t_stub		*stub	= alloc_stub();
 	if (fd != -1)
@@ -59,8 +60,8 @@ void			replace_section(char *section_name, void *content, int size)
 	while (sections)
 	{
 		if (!ft_strcmp(section_name, get_section_name(sections->data->sh_name)))
-		{	
-			//g_diff = size - sections->data->sh_size;
+		{
+			data->diff_offset = size - sections->data->sh_size;
 			sections->data->sh_size = size;
 			sections->content = content;
 			break;
@@ -72,6 +73,5 @@ void			replace_section(char *section_name, void *content, int size)
 void			update_elf()
 {
 	t_stub	*stub = get_stub_data();
-	//replace_section(".text", stub->text, stub->text_len);
-	//printf("diff : %d\n", g_diff);
+	replace_section(".text", stub->text, stub->text_len);
 }

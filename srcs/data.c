@@ -24,6 +24,7 @@ t_data			*alloc_data()
 	g_data->elf->big_endian = false;
 	g_data->elf->segments = NULL;
 	g_data->elf->sections = NULL;
+	g_data->diff_offset = 0;
 	return g_data;
 }
 

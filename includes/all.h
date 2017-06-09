@@ -157,8 +157,11 @@ typedef struct	s_data
 {
 	int			fd;
 	off_t		len;
+	int			diff_offset;
 	void		*buffer;
 	void		*new_buffer;
+	int			default_e_shoff;
+	int			default_strtab;
 	t_elf		*elf;
 }				t_data;
 
@@ -206,5 +209,6 @@ char			*get_section_name(int offset);
 */
 void			update_elf();
 
+int				g_offset;
 t_data			*g_data;
 #endif

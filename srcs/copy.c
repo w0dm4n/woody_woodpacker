@@ -33,20 +33,12 @@ void		copy_sections()
 	}
 }
 
-void		copy_strings()
-{
-	t_data				*data = get_data();
-	struct elf64_shdr	*section		= (struct elf64_shdr*) (data->buffer + data->elf->header->e_shoff);
-	new_section(&section[data->elf->header->e_shstrndx], data->buffer + section[data->elf->header->e_shstrndx].sh_offset);
-}
-
 void        copy_elf()
 {
 	t_data			*data = get_data();
 
 	copy_segments();
 	copy_sections();
-	//copy_strings();
 	if (data->elf->big_endian)
 	{
 		// hey swap me !

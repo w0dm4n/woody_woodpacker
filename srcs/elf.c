@@ -54,7 +54,7 @@ void		get_elf_header()
 	t_data			*data = get_data();
 	struct elf64_hdr* header = (struct elf64_hdr*) data->buffer;
 	data->elf->header = malloc(sizeof(struct elf64_hdr));
-	
+
 	ft_memcpy(data->elf->header, header, sizeof(struct elf64_hdr));
 	get_magic();
 	get_arch();
@@ -82,6 +82,7 @@ void		read_elf(char *file_name)
 		if (data->elf->is_64)
 		{
 			copy_elf();
+			data->default_e_shoff = data->elf->header->e_shoff;
 			update_elf();
 			build();
 		}

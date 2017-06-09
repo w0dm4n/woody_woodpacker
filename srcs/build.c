@@ -41,7 +41,7 @@ void					set_segments()
 char				*get_section_name(int offset)
 {
 	t_data				*data			= get_data();
-	struct elf64_shdr	*section		= (struct elf64_shdr*) (data->buffer + data->elf->header->e_shoff);
+	struct elf64_shdr	*section		= (struct elf64_shdr*) (data->buffer + data->default_e_shoff);
 	char				*string_tab		= data->buffer + section[data->elf->header->e_shstrndx].sh_offset;
 	return (string_tab + offset);
 }
@@ -52,35 +52,40 @@ void				set_sections()
 	t_section			*sections		= data->elf->sections;
 	int					i				= 0;
 	void				*base_pointer	= data->new_buffer + data->elf->header->e_shoff;
+	bool				after			= false;
 	while (sections)
 	{
+		if (after)
+			sections->data->sh_offset += data->diff_offset;
 		ft_memcpy(base_pointer + ((sizeof(struct elf64_shdr) * i++)), sections->data, sizeof(struct elf64_shdr));
-
 		if (ft_strcmp(get_section_name(sections->data->sh_name), ".bss"))
 			ft_memcpy(data->new_buffer + sections->data->sh_offset, sections->content, sections->data->sh_size);
 
-		printf("%s\n", get_section_name(sections->data->sh_name));
+		if (!ft_strcmp(get_section_name(sections->data->sh_name), ".text"))
+			after = true;
+		printf("%s, size: %d, offset: %d\n", get_section_name(sections->data->sh_name), sections->data->sh_size, sections->data->sh_offset);
 		sections = sections->next;
 	}
 }
 
-void					set_strings()
+/*void					set_strings()
 {
 	t_data				*data = get_data();
 	struct elf64_shdr	*section		= (struct elf64_shdr*) (data->buffer + data->elf->header->e_shoff);
 	struct elf64_shdr	*string_section = &section[data->elf->header->e_shstrndx];
 	ft_memcpy(data->new_buffer + string_section->sh_offset, data->buffer + string_section->sh_offset, string_section->sh_size);
-}
+}*/
 
 void					build()
 {
 	t_data				*data = get_data();
 
+	data->len = data->len + data->diff_offset;
+	data->elf->header->e_shoff = data->elf->header->e_shoff + data->diff_offset;
 	if (!(data->new_buffer = ft_strnew(data->len)))
 		return ;
 	ft_memcpy(data->new_buffer, data->elf->header, sizeof(struct elf64_hdr));
 	set_segments();
 	set_sections();
-	set_strings();
 	save_file("woody");
 }
