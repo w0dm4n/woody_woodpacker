@@ -2,7 +2,7 @@
 
 int	main(int argc, char **argv)
 {
-	char bonjour[8] = "woodman\n";	
+	char bonjour[6] = "woodman\n";	
 	printf("%s", bonjour);
 }
 

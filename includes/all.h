@@ -6,7 +6,7 @@
 /*   By: frmarinh <frmarinh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/30 06:09:59 by frmarinh          #+#    #+#             */
-/*   Updated: 2017/05/30 06:10:14 by frmarinh         ###   ########.fr       */
+/*   Updated: 2017/06/09 13:07:33 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,21 @@
 # define B_ENDIAN			2
 # define SHT_SYMTAB			2 // These sections hold a symbol table ; provides symbols for link editing
 # define SHT_DYNSYM			11 // These sections hold a symbol table ; olds a minimal set of dynamic linking symbols
+
+/* These constants are for the segment types stored in the image headers */
+#define PT_NULL    			0
+#define PT_LOAD    			1
+#define PT_DYNAMIC 			2
+#define PT_INTERP  			3
+#define PT_NOTE    			4
+#define PT_SHLIB   			5
+#define PT_PHDR    			6
+#define PT_TLS     			7               /* Thread local storage segment */
+#define PT_LOOS    			0x60000000      /* OS-specific */
+#define PT_HIOS    			0x6fffffff      /* OS-specific */
+#define PT_LOPROC  			0x70000000
+#define PT_HIPROC  			0x7fffffff
+#define PT_GNU_EH_FRAME		0x6474e550
 
 /* 64-bit ELF base types. */
 typedef unsigned long long			Elf64_Addr;
@@ -105,7 +120,7 @@ typedef struct		elf64_phdr
                  the section header table is held in the sh_size member of
                  the initial entry in section header table.  Otherwise,
                  the sh_size member of the initial entry in the section
-                 header table holds the value zero.   
+                 header table holds the value zero.
 
    sh_name       This member specifies the name of the section.  Its value
                  is an index into the section header string table section,
@@ -129,7 +144,8 @@ typedef struct			elf64_shdr
 
 typedef struct			s_segment
 {
-	struct elf64_phdr*	data;
+	struct elf64_phdr	*data;
+	int					id;
 	struct s_segment	*prev;
 	struct s_segment	*next;
 }						t_segment;
@@ -137,39 +153,36 @@ typedef struct			s_segment
 typedef struct			s_section
 {
 	struct elf64_shdr	*data;
+	char				*name;
 	void				*content;
 	struct s_section	*prev;
 	struct s_section	*next;
+	struct s_segment	*parent;
 }						t_section;
 
 typedef struct			s_elf
 {
+	char				*name;
 	struct elf64_hdr	*header;
 	struct s_segment	*segments;
 	struct s_section	*sections;
+	char				*string_tab;
 	unsigned char		magic[(MAGIC_LEN * 2) + 1];
 	bool				is_64;
 	bool				big_endian;
 	bool				little_endian;
+	size_t				len;
+	void				*buffer;
+	struct s_section	*(*get_section)();
+	int					(*get_nbr_segments)();
+	int					(*get_nbr_sections)();
+	int					(*get_offset_sections)();
+	int					(*get_index_section)();
+	struct s_segment	*(*get_segment_type)();
+	struct s_section	**(*get_sections_segment)();
+	struct s_segment	*(*get_segment_by_section)();
 }
 						t_elf;
-typedef struct	s_data
-{
-	int			fd;
-	off_t		len;
-	int			diff_offset;
-	void		*buffer;
-	void		*new_buffer;
-	int			default_e_shoff;
-	int			default_strtab;
-	t_elf		*elf;
-}				t_data;
-
-typedef struct		s_stub
-{
-	void	*text;
-	int		text_len;
-}				t_stub;
 
 /*
 **	MAIN
@@ -178,37 +191,12 @@ void			print_error(char *error, bool should_exit);
 void			*ft_mmap(int fd, size_t size);
 
 /*
-**	DATA
+**	ELF FUNCTIONS
 */
-t_data			*get_data();
-t_section		*get_sections();
-t_segment		*get_segments();
-void			new_segment(struct elf64_phdr	*segment);
-void			new_section(struct elf64_shdr	*section, void *content);
+t_elf			*alloc_elf(void);
+t_elf           *read_elf(const char *file_name);
+void			*write_elf(t_elf *elf);
 
-/*
-**	ELF
-*/
-void			read_elf(char *file_name);
-void			save_crypted_file(char *file);
+bool			replace_section(t_section *section, t_elf *elf);
 
-/*
-**	COPY
-*/
-void			copy_elf();
-void			copy_section(void *ptr, int position, int size);
-
-/*
-**	BUILD
-*/
-void			build();
-char			*get_section_name(int offset);
-
-/*
-** UPDATE
-*/
-void			update_elf();
-
-int				g_offset;
-t_data			*g_data;
 #endif

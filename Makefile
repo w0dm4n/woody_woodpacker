@@ -6,7 +6,7 @@
 #    By: frmarinh <frmarinh@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/05/20 17:57:50 by frmarinh          #+#    #+#              #
-#    Updated: 2017/05/30 10:49:01 by frmarinh         ###   ########.fr        #
+#    Updated: 2017/06/09 11:03:18 by jguyet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ MAX_COLS	=	$$(echo "$$(tput cols)-24-$(LENGTHNAME)"|bc)
 CC			=	gcc -ggdb
 #FLAGS		=	-Wall -Wextra -Werror
 FLAGS		=
-FLAGS_O		=	
+FLAGS_O		=
 
 SRCDIR_WOODY		=	srcs/
 OBJDIR_WOODY		=	objs/
@@ -31,11 +31,10 @@ LIBFT_LIB			=	$(LIBFT_DIR)libft.a
 
 SRCBASE_WOODY	=	\
 					main.c				\
-					data.c				\
-					elf.c				\
-					copy.c				\
-					build.c				\
-					update.c
+					elf_writer.c		\
+					elf_reader.c		\
+					elf_reforge.c		\
+					elf.c
 INCS			=	$(addprefix $(INCDIR), $(INCBASE))
 
 SRCS_WOODY			=	$(addprefix $(SRCDIR_WOODY), $(SRCBASE_WOODY))
