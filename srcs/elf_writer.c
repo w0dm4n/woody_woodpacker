@@ -6,7 +6,7 @@
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 10:31:31 by jguyet            #+#    #+#             */
-/*   Updated: 2017/06/09 14:33:53 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:25:56 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,16 @@ static void     *write_header(void *ptr, t_elf *elf)
 	printf("(final)elf->header->e_phnum: %d\n", elf->header->e_phnum);
 	printf("(final)elf->header->e_shnum: %d\n\n", elf->header->e_shnum);
 	//set offsets
-	printf("(base)elf->header->e_phoff: %d\n", elf->header->e_phoff);
-	printf("(base)elf->header->e_shoff: %d\n", elf->header->e_shoff);
+	printf("(base)elf->header->e_phoff: %llu\n", elf->header->e_phoff);
+	printf("(base)elf->header->e_shoff: %llu\n", elf->header->e_shoff);
 	elf->header->e_phoff = sizeof(struct elf64_hdr);
 	elf->header->e_shoff = elf->get_offset_sections(elf);
 
 
-	printf("(final)elf->header->e_phoff: %d\n", elf->header->e_phoff);
-	printf("(final)elf->header->e_shoff: %d\n", elf->header->e_shoff);
+	printf("(final)elf->header->e_phoff: %llu\n", elf->header->e_phoff);
+	printf("(final)elf->header->e_shoff: %llu\n", elf->header->e_shoff);
 
-    printf("(beta)elf->header->e_shoff: %d\n", elf->header->e_shoff);
+    printf("(beta)elf->header->e_shoff: %llu\n", elf->header->e_shoff);
 	//TODO String tab
     printf("(base).shstrtab index %d\n", elf->header->e_shstrndx);
     elf->header->e_shstrndx = (unsigned short)elf->get_index_section(elf, ".shstrtab") - 1;

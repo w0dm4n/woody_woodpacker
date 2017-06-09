@@ -6,7 +6,7 @@
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 10:31:20 by jguyet            #+#    #+#             */
-/*   Updated: 2017/06/09 13:49:55 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:24:54 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ static t_elf		*load_segments(t_elf *elf)
 		segment->prev = NULL;
 		segment->next = NULL;
         segment->id = i;
-        printf("[%10s] |    segment [%d]                      addr: %8d  size: %10d  type: ", elf->name, segment->id, segment->data->p_vaddr, segment->data->p_memsz);
+        printf("[%10s] |    segment [%d]                      addr: %8llu  size: %10llu  type: ", elf->name, segment->id, segment->data->p_vaddr, segment->data->p_memsz);
 
         if (segment->data->p_type == PT_NULL)
             printf("PT_NULL\n");
@@ -293,7 +293,7 @@ static t_elf	   *load_sections(t_elf *elf)
 		section->next = NULL;
 		section->name = ft_strdup(elf->string_tab + sections[i].sh_name);
         section->parent = elf->get_segment_by_section(elf, section);
-        printf("[%10s] |    [parent segment_%d]    section %-15s    size: %10d\n", elf->name, section->parent->id, section->name, section->data->sh_size);
+        printf("[%10s] |    [parent segment_%d]    section %-15s    size: %10llu\n", elf->name, section->parent->id, section->name, section->data->sh_size);
 		add_section(elf, section);
 		i++;
 	}

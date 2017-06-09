@@ -6,7 +6,7 @@
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 10:32:01 by jguyet            #+#    #+#             */
-/*   Updated: 2017/06/09 14:51:46 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:23:46 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,18 @@ bool	replace_section(t_section *section, t_elf *elf)
 			ft_memcpy(tmp->content, section->content, section->data->sh_size);
 			//500 - 40 = 480
 			//40 - 500 = -480
-            printf("p_memsz %d, p_memsz2 %d\n", tmp->parent->data->p_memsz, section->parent->data->p_memsz);
+            tmp->parent->data->p_memsz -= tmp->data->sh_size;
+            tmp->parent->data->p_filesz -= tmp->data->sh_size;
+
+            printf("p_memsz %llu, p_memsz2 %llu\n", tmp->parent->data->p_memsz, section->parent->data->p_memsz);
 			augmente_off = (int)section->data->sh_size - tmp->data->sh_size;
-            printf("section->data->sh_size %d, tmp->data->sh_size %d, augmente_off %d\n", section->data->sh_size, tmp->data->sh_size, augmente_off);
+            printf("section->data->sh_size %llu, tmp->data->sh_size %llu, augmente_off %d\n", section->data->sh_size, tmp->data->sh_size, augmente_off);
+
             elf->len += augmente_off;
 			tmp->data->sh_size = section->data->sh_size;
+
+            tmp->parent->data->p_memsz += tmp->data->sh_size;
+            tmp->parent->data->p_filesz += tmp->data->sh_size;
             while (tmp)
 			{
 				tmp->data->sh_offset = tmp->data->sh_offset + augmente_off;
@@ -44,3 +51,7 @@ bool	replace_section(t_section *section, t_elf *elf)
 	}
 	return (false);
 }
+
+/*
+ * SINON FAIRE COMME TU A DIT UNE FONCTION ICI ET JUSTE MODIFIER DES BOUTS
+ */
