@@ -6,12 +6,23 @@
 /*   By: frmarinh <frmarinh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/03 11:51:04 by frmarinh          #+#    #+#             */
-/*   Updated: 2017/06/09 13:42:51 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:11:04 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "all.h"
 
+/*
+ * int		get_nbr_segments(struct s_segment *segments)
+ * ----------------------
+ *
+ * Params:
+ * struct s_segment *segments (SEGMENTS TAB CHAINE)
+ *
+ * count all segments and return total size
+ *
+ * Return   int total
+ */
 int		get_nbr_segments(struct s_segment *segments)
 {
 	struct s_segment	*tmp;
@@ -27,6 +38,17 @@ int		get_nbr_segments(struct s_segment *segments)
 	return (res);
 }
 
+/*
+ * int		get_nbr_sections(struct s_section *sections)
+ * ----------------------
+ *
+ * Params:
+ * struct s_section *sections (SECTIONS TAB CHAINE)
+ *
+ * count all sections and return total size
+ *
+ * Return   int total
+ */
 int		get_nbr_sections(struct s_section *sections)
 {
 	struct s_section	*tmp;
@@ -42,6 +64,19 @@ int		get_nbr_sections(struct s_section *sections)
 	return (res);
 }
 
+/*
+ * int		get_offset_sections(t_elf *elf)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ *
+ * select final struc s_section and return section offset + size + 1
+ * offset of start header sections zone
+ *
+ * Return   int offset
+ *          0    -> not found
+ */
 int		get_offset_sections(t_elf *elf)
 {
 	struct s_section	*tmp_sec;
@@ -57,6 +92,19 @@ int		get_offset_sections(t_elf *elf)
 	return (offset);
 }
 
+/*
+ * int		get_index_section(t_elf *elf, char *name)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ * char *search name
+ *
+ * Search section by name and return index in tab sections
+ *
+ * Return   int index
+ *          -1    -> not found
+ */
 int		get_index_section(t_elf *elf, char *name)
 {
 	t_section	*tmp;
@@ -76,6 +124,19 @@ int		get_index_section(t_elf *elf, char *name)
 	return (-1);
 }
 
+/*
+ * t_section	*get_section(t_elf *elf, char *name)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ * char *search name
+ *
+ * Search section by name and return pointer t_segment
+ *
+ * Return   t_section	*
+ *          NULL    -> not found
+ */
 t_section	*get_section(t_elf *elf, char *name)
 {
 	t_section	*tmp;
@@ -92,6 +153,20 @@ t_section	*get_section(t_elf *elf, char *name)
 	return (NULL);
 }
 
+/*
+ * t_segment	*get_segment_by_section(t_elf *elf, t_section *section)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ * t_section *section (ref)
+ *
+ * Search on elf->segments a first segment wich section->sh_addr is in segment
+ * and return pointer t_segment
+ *
+ * Return   t_segment	*
+ *          NULL    -> not found
+ */
 t_segment	*get_segment_by_section(t_elf *elf, t_section *section)
 {
 	t_segment	*tmp;
@@ -106,10 +181,36 @@ t_segment	*get_segment_by_section(t_elf *elf, t_section *section)
 		}
 		tmp = tmp->next;
 	}
-	printf("NULL");
 	return (NULL);
 }
 
+/*
+ * t_segment	*get_segment_type(t_elf *elf, int type)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ * int type
+ *		PT_NULL    			0
+ *		PT_LOAD    			1
+ *		PT_DYNAMIC 			2
+ *		PT_INTERP  			3
+ *		PT_NOTE    			4
+ *		PT_SHLIB   			5
+ *		PT_PHDR    			6
+ *		PT_TLS     			7
+ *		PT_LOOS    			0x60000000
+ *		PT_HIOS    			0x6fffffff
+ *		PT_LOPROC  			0x70000000
+ *		PT_HIPROC  			0x7fffffff
+ *		PT_GNU_EH_FRAME		0x6474e550
+ *
+ * Search on elf->segments a first segment wich type equal arg type
+ * and return pointer t_segment
+ *
+ * Return   t_segment	*
+ *          NULL    -> not found
+ */
 t_segment	*get_segment_type(t_elf *elf, int type)
 {
 	t_segment	*tmp;
@@ -126,6 +227,21 @@ t_segment	*get_segment_type(t_elf *elf, int type)
 	return (NULL);
 }
 
+/*
+ * t_section	**get_sections_segment(t_elf *elf, t_segment *segment)
+ * ----------------------
+ *
+ * Params:
+ * t_elf *elf
+ * t_segment *segment (ref)
+ *
+ * Search all sections contained by t_segment *segment
+ * and create a new tab and set all pointers who point in section
+ * finished by null case
+ *
+ * Return   t_section	**tab
+ *          NULL    -> error
+ */
 t_section	**get_sections_segment(t_elf *elf, t_segment *segment)
 {
 	t_section	*tmp;
@@ -162,6 +278,15 @@ t_section	**get_sections_segment(t_elf *elf, t_segment *segment)
 	return (result);
 }
 
+/*
+ * t_elf		*alloc_elf(void)
+ * ----------------------
+ *
+ * Alloc a new t_elf and set all values and pointers
+ *
+ * Return   t_elf *ptr
+ *          NULL    -> error
+ */
 t_elf		*alloc_elf(void)
 {
 	t_elf	*elf;

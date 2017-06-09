@@ -6,7 +6,7 @@
 /*   By: frmarinh <frmarinh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/30 06:08:58 by frmarinh          #+#    #+#             */
-/*   Updated: 2017/06/09 12:51:55 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/06/09 14:54:00 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,12 @@ int			main(int argc, char **argv)
 			i++;
 		}
 
-		//replace_section(ofile_2->get_section(ofile_2, ".text"), ofile);
-		//replace_section(ofile_2->get_section(ofile_2, ".rodata"), ofile);
-		//replace_section(ofile_2->get_section(ofile_2, ".bss"), ofile);
+		replace_section(ofile_2->get_section(ofile_2, ".text"), ofile);
+		replace_section(ofile_2->get_section(ofile_2, ".rodata"), ofile);
+		replace_section(ofile_2->get_section(ofile_2, ".bss"), ofile);
 
 		void	*content = write_elf(ofile);
+
 		save_file("copy", content, ofile->len);
 		//TODO process
 	}
